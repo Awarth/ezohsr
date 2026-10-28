@@ -28,3 +28,23 @@
     outline-offset: 2px;
   }
 }
+
+@keyframes top-progress {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(300%);
+  }
+}
+
+.top-progress {
+  animation: top-progress 1.1s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .top-progress {
+    animation: none;
+    width: 100%;
+  }
+}

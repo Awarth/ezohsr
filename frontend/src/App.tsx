@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useAccuracy, useDecision, useMeta } from './api'
 import { AccuracyPage } from './AccuracyPage'
-import { Badge, ErrorBox, Loading } from './components'
+import { Badge, ErrorBox, Loading, Spinner, TopProgress } from './components'
 import { DayStrip } from './DayStrip'
 import { DecisionPage } from './DecisionPage'
 import { addDays, londonStamp, longDay } from './format'
@@ -44,7 +44,13 @@ export default function App() {
   const decision = useDecision(day, cutoff)
   const month = useAccuracy('month', day, cutoff)
 
-  if (meta.isLoading) return <div className="mx-auto max-w-6xl p-4"><Loading /></div>
+  if (meta.isLoading)
+    return (
+      <div className="mx-auto max-w-6xl p-4">
+        <TopProgress />
+        <Loading label="Loading Wind Forecast Desk" />
+      </div>
+    )
   if (meta.error || !meta.data) return <ErrorBox error={meta.error ?? new Error('No data')} retry={() => meta.refetch()} />
   const m = meta.data
   const validCutoff = CUTOFF_RE.test(cutoffDraft)
@@ -57,6 +63,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen">
+      <TopProgress />
       <header className="border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur md:sticky md:top-0 md:z-10">
         <div className="mx-auto max-w-6xl px-4">
           <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2 pt-3">
@@ -132,7 +139,9 @@ export default function App() {
                   {d.vintage_minutes_before_cutoff != null && <Badge tone="neutral">{d.vintage_minutes_before_cutoff} min before cutoff</Badge>}
                 </>
               ) : decision.isLoading ? (
-                'Selecting forecast vintage...'
+                <span className="flex items-center gap-2 text-slate-500">
+                  <Spinner /> Selecting forecast vintage...
+                </span>
               ) : (
                 'No forecast was available at this cutoff'
               )}
@@ -141,13 +150,20 @@ export default function App() {
         </div>
       </header>
 
-      {month.data && (
-        <div className="mx-auto max-w-6xl px-4 pt-4">
-          <div className="rounded-lg border border-slate-200 bg-white p-3 shadow-sm">
+      <div className="mx-auto max-w-6xl px-4 pt-4">
+        <div className="rounded-lg border border-slate-200 bg-white p-3 shadow-sm">
+          {month.data ? (
             <DayStrip days={month.data.daily} selected={day} onSelect={setDay} />
-          </div>
+          ) : (
+            <div role="status" aria-label="Loading day strip" className="space-y-2">
+              <div className="flex items-center gap-2 text-xs text-slate-500">
+                <Spinner /> Loading forecast error by day...
+              </div>
+              <div className="h-8 animate-pulse rounded bg-slate-200/70" />
+            </div>
+          )}
         </div>
-      )}
+      </div>
       <main className="mx-auto max-w-6xl p-4">
         {tab === 'decision' ? (
           <DecisionPage day={day} cutoff={cutoff} />

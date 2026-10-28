@@ -15,7 +15,7 @@ import {
   YAxis,
 } from 'recharts'
 import { useAccuracy, useVintages } from './api'
-import { Badge, Callout, Card, ErrorBox, Loading, Panel, Segmented, SignLegend, TooltipBox } from './components'
+import { Badge, Callout, Card, ErrorBox, Loading, Panel, Segmented, SignLegend, Spinner, TooltipBox } from './components'
 import { londonStamp, mw, shortDay, signedMw } from './format'
 
 const OVER = '#dc2626'
@@ -29,8 +29,25 @@ export function AccuracyPage({ day, cutoff, onOpenDay }: { day: string; cutoff: 
   const vint = useVintages(cutoff)
   const [showGaps, setShowGaps] = useState(false)
 
-  if (acc.isLoading) return <Loading label="Loading accuracy" />
-  if (acc.error || !acc.data) return <ErrorBox error={acc.error ?? new Error('No data')} retry={() => acc.refetch()} />
+  if (acc.isLoading || acc.error || !acc.data) {
+    return (
+      <div className="space-y-4">
+        <Segmented
+          value={scope}
+          onChange={setScope}
+          options={[
+            { value: 'month', label: 'Month' },
+            { value: 'day', label: `Selected day (${shortDay(day)})` },
+          ]}
+        />
+        {acc.error || (!acc.isLoading && !acc.data) ? (
+          <ErrorBox error={acc.error ?? new Error('No data')} retry={() => acc.refetch()} />
+        ) : (
+          <Loading label="Loading accuracy" />
+        )}
+      </div>
+    )
+  }
 
   const { metrics: m, quality: q } = acc.data
   const daily = acc.data.daily.map((d) => ({ ...d, label: shortDay(d.day) }))
@@ -215,7 +232,11 @@ export function AccuracyPage({ day, cutoff, onOpenDay }: { day: string; cutoff: 
             : undefined
         }
       >
-        {vint.isLoading && <Loading />}
+        {vint.isLoading && (
+          <div role="status" aria-label="Loading vintage comparison" className="flex items-center gap-2 py-6 text-sm text-slate-500">
+            <Spinner /> Comparing forecast vintages...
+          </div>
+        )}
         {vint.error && <ErrorBox error={vint.error} retry={() => vint.refetch()} />}
         {vint.data && (
           <div className="overflow-x-auto">

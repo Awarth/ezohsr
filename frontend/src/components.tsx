@@ -1,3 +1,4 @@
+import { useIsFetching } from '@tanstack/react-query'
 import type { ReactNode } from 'react'
 
 const accent = {
@@ -54,16 +55,43 @@ export function Panel({
   )
 }
 
+export function Spinner({ className = 'h-4 w-4' }: { className?: string }) {
+  return (
+    <svg className={`animate-spin text-forecast ${className}`} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeOpacity="0.2" strokeWidth="3" />
+      <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+    </svg>
+  )
+}
+
+/** Thin indeterminate bar pinned to the top of the viewport while any API request is in flight. */
+export function TopProgress() {
+  const fetching = useIsFetching() > 0
+  return (
+    <div
+      aria-hidden="true"
+      className={`pointer-events-none fixed inset-x-0 top-0 z-50 h-0.5 overflow-hidden bg-blue-100 transition-opacity duration-150 ${
+        fetching ? 'opacity-100' : 'opacity-0'
+      }`}
+    >
+      <div className="top-progress h-full w-1/3 bg-forecast" />
+    </div>
+  )
+}
+
 export function Loading({ label = 'Loading' }: { label?: string }) {
   return (
     <div role="status" aria-label={label} className="space-y-4">
+      <div className="flex items-center gap-2 text-sm font-medium text-slate-600">
+        <Spinner className="h-5 w-5" />
+        {label}...
+      </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         {[0, 1, 2].map((i) => (
-          <div key={i} className="h-24 animate-pulse rounded-lg border border-slate-200 bg-white" />
+          <div key={i} className="h-24 animate-pulse rounded-lg border border-slate-200 bg-slate-200/70" />
         ))}
       </div>
-      <div className="h-80 animate-pulse rounded-lg border border-slate-200 bg-white" />
-      <span className="sr-only">{label}...</span>
+      <div className="h-80 animate-pulse rounded-lg border border-slate-200 bg-slate-200/70" />
     </div>
   )
 }
