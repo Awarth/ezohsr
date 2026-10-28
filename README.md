@@ -6,7 +6,7 @@ actually available at the day-ahead cutoff, and quantifies how wrong that foreca
 Data: national wind only, from Elexon BMRS `FUELHH` (actuals, `fuelType=WIND`) and `WINDFOR` (forecasts).
 Scope: decisions made in January 2026, i.e. delivery days 2 Jan - 1 Feb 2026.
 
-**Live app:** _TODO: add the Vercel URL after deploying_
+**Live app:** https://ezohsr.vercel.app/
 
 ## AI tool usage
 
