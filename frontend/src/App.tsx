@@ -1,12 +1,17 @@
 import { useEffect, useState } from 'react'
-import { useMeta } from './api'
+import { useAccuracy, useDecision, useMeta } from './api'
 import { AccuracyPage } from './AccuracyPage'
-import { ErrorBox, Loading, Segmented } from './components'
+import { Badge, ErrorBox, Loading } from './components'
+import { DayStrip } from './DayStrip'
 import { DecisionPage } from './DecisionPage'
 import { addDays, londonStamp, longDay } from './format'
-import { useDecision } from './api'
 
 type Tab = 'decision' | 'accuracy'
+
+const CUTOFF_RE = /^([01]\d|2[0-3]):[0-5]\d$/
+
+const stepBtn =
+  'flex h-8 w-8 items-center justify-center rounded-md border border-slate-300 bg-white text-slate-700 hover:bg-slate-100 disabled:opacity-30 disabled:hover:bg-white'
 
 export default function App() {
   const meta = useMeta()
@@ -35,93 +40,128 @@ export default function App() {
     return () => window.removeEventListener('keydown', onKey)
   }, [meta.data])
 
-  // Shares the cached decision query so the header's vintage line is always the data shown below.
+  // Both share cached queries with the pages below, so the header never disagrees with the data shown.
   const decision = useDecision(day, cutoff)
+  const month = useAccuracy('month', day, cutoff)
 
-  if (meta.isLoading) return <Loading />
+  if (meta.isLoading) return <div className="mx-auto max-w-6xl p-4"><Loading /></div>
   if (meta.error || !meta.data) return <ErrorBox error={meta.error ?? new Error('No data')} retry={() => meta.refetch()} />
   const m = meta.data
-  const validCutoff = /^([01]\d|2[0-3]):[0-5]\d$/.test(cutoffDraft)
+  const validCutoff = CUTOFF_RE.test(cutoffDraft)
+  const d = decision.data
+
+  const tabs: { value: Tab; label: string }[] = [
+    { value: 'decision', label: 'Decision' },
+    { value: 'accuracy', label: 'Accuracy' },
+  ]
 
   return (
-    <div className="mx-auto max-w-6xl p-4">
-      <header className="mb-4 rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h1 className="text-lg font-semibold">Wind Forecast Desk</h1>
-            <p className="text-xs text-slate-500">GB national wind - Elexon FUELHH and WINDFOR - January 2026 decisions</p>
-          </div>
-          <Segmented
-            value={tab}
-            onChange={setTab}
-            options={[
-              { value: 'decision', label: 'Decision' },
-              { value: 'accuracy', label: 'Accuracy' },
-            ]}
-          />
-        </div>
-        <div className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
-          <div className="flex items-center gap-2">
-            <span className="text-slate-500">Delivery day</span>
-            <button
-              aria-label="Previous day"
-              disabled={day <= m.first_day}
-              onClick={() => setDay(addDays(day, -1))}
-              className="rounded border border-slate-300 px-2 disabled:opacity-30"
-            >
-              &lt;
-            </button>
-            <input
-              type="date"
-              aria-label="Delivery day"
-              value={day}
-              min={m.first_day}
-              max={m.last_day}
-              onChange={(e) => e.target.value && setDay(e.target.value)}
-              className="rounded border border-slate-300 px-2 py-0.5"
-            />
-            <button
-              aria-label="Next day"
-              disabled={day >= m.last_day}
-              onClick={() => setDay(addDays(day, 1))}
-              className="rounded border border-slate-300 px-2 disabled:opacity-30"
-            >
-              &gt;
-            </button>
-            <span className="text-slate-700">{longDay(day)}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <label htmlFor="cutoff" className="text-slate-500">
-              Decision cutoff (D-1, London)
-            </label>
-            <input
-              id="cutoff"
-              value={cutoffDraft}
-              onChange={(e) => {
-                setCutoffDraft(e.target.value)
-                if (/^([01]\d|2[0-3]):[0-5]\d$/.test(e.target.value)) setCutoff(e.target.value)
-              }}
-              aria-invalid={!validCutoff}
-              className={`w-16 rounded border px-2 py-0.5 ${validCutoff ? 'border-slate-300' : 'border-red-400'}`}
-            />
+    <div className="min-h-screen">
+      <header className="border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur md:sticky md:top-0 md:z-10">
+        <div className="mx-auto max-w-6xl px-4">
+          <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2 pt-3">
+            <div className="pb-2">
+              <h1 className="text-lg font-semibold tracking-tight">Wind Forecast Desk</h1>
+              <p className="text-xs text-slate-500">GB national wind &middot; Elexon FUELHH and WINDFOR &middot; January 2026 decisions</p>
+            </div>
+            <nav role="tablist" aria-label="View" className="flex gap-1">
+              {tabs.map((t) => (
+                <button
+                  key={t.value}
+                  role="tab"
+                  aria-selected={tab === t.value}
+                  onClick={() => setTab(t.value)}
+                  className={`-mb-px border-b-2 px-4 py-2 text-sm font-medium ${
+                    tab === t.value ? 'border-forecast text-forecast' : 'border-transparent text-slate-500 hover:text-slate-800'
+                  }`}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </nav>
           </div>
         </div>
-        <p className="mt-2 text-sm text-slate-600" data-testid="vintage-line">
-          {decision.data?.vintage ? (
-            <>
-              Forecast vintage: published <strong>{londonStamp(decision.data.vintage)}</strong>
-              {decision.data.vintage_minutes_before_cutoff != null &&
-                ` - ${decision.data.vintage_minutes_before_cutoff} min before cutoff`}
-            </>
-          ) : decision.isLoading ? (
-            'Selecting forecast vintage...'
-          ) : (
-            'No forecast was available at this cutoff'
-          )}
-        </p>
+        <div className="border-t border-slate-100 bg-slate-50/80">
+          <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-2 text-sm">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-medium uppercase tracking-wide text-slate-500">Delivery day</span>
+              <button aria-label="Previous day" disabled={day <= m.first_day} onClick={() => setDay(addDays(day, -1))} className={stepBtn}>
+                &lsaquo;
+              </button>
+              <input
+                type="date"
+                aria-label="Delivery day"
+                value={day}
+                min={m.first_day}
+                max={m.last_day}
+                onChange={(e) => e.target.value && setDay(e.target.value)}
+                className="h-8 rounded-md border border-slate-300 bg-white px-2"
+              />
+              <button aria-label="Next day" disabled={day >= m.last_day} onClick={() => setDay(addDays(day, 1))} className={stepBtn}>
+                &rsaquo;
+              </button>
+              <span className="hidden font-medium text-slate-800 sm:inline">{longDay(day)}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <label htmlFor="cutoff" className="text-xs font-medium uppercase tracking-wide text-slate-500">
+                Decision cutoff (D-1, London)
+              </label>
+              <input
+                id="cutoff"
+                inputMode="numeric"
+                placeholder="09:50"
+                value={cutoffDraft}
+                onChange={(e) => {
+                  setCutoffDraft(e.target.value)
+                  if (CUTOFF_RE.test(e.target.value)) setCutoff(e.target.value)
+                }}
+                aria-invalid={!validCutoff}
+                aria-describedby="cutoff-hint"
+                className={`h-8 w-20 rounded-md border bg-white px-2 text-center ${validCutoff ? 'border-slate-300' : 'border-red-400 bg-red-50'}`}
+              />
+              <span id="cutoff-hint" className={`text-xs ${validCutoff ? 'sr-only' : 'text-red-600'}`}>
+                Use 24-hour HH:MM
+              </span>
+            </div>
+            <p className="flex flex-wrap items-center gap-2 text-slate-600" data-testid="vintage-line">
+              {d?.vintage ? (
+                <>
+                  <span>
+                    Forecast vintage: published <strong className="text-slate-900">{londonStamp(d.vintage)}</strong>
+                  </span>
+                  {d.vintage_minutes_before_cutoff != null && <Badge tone="neutral">{d.vintage_minutes_before_cutoff} min before cutoff</Badge>}
+                </>
+              ) : decision.isLoading ? (
+                'Selecting forecast vintage...'
+              ) : (
+                'No forecast was available at this cutoff'
+              )}
+            </p>
+          </div>
+        </div>
       </header>
 
-      {tab === 'decision' ? <DecisionPage day={day} cutoff={cutoff} /> : <AccuracyPage day={day} cutoff={cutoff} onOpenDay={(d) => { setDay(d); setTab('decision') }} />}
+      {month.data && (
+        <div className="mx-auto max-w-6xl px-4 pt-4">
+          <div className="rounded-lg border border-slate-200 bg-white p-3 shadow-sm">
+            <DayStrip days={month.data.daily} selected={day} onSelect={setDay} />
+          </div>
+        </div>
+      )}
+      <main className="mx-auto max-w-6xl p-4">
+        {tab === 'decision' ? (
+          <DecisionPage day={day} cutoff={cutoff} />
+        ) : (
+          <AccuracyPage
+            day={day}
+            cutoff={cutoff}
+            onOpenDay={(x) => {
+              setDay(x)
+              setTab('decision')
+            }}
+          />
+        )}
+      </main>
     </div>
   )
 }
