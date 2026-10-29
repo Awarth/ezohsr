@@ -67,22 +67,16 @@ svg .brace { stroke: var(--brand); stroke-width: 2; fill: none; }
 .slide ul { margin: 0; padding-left: 26px; font-size: 25px; line-height: 1.45; }
 .slide li { margin: 10px 0; }
 .slide h3 { margin: 0 0 10px; font-size: 14px; letter-spacing: 0.09em; text-transform: uppercase; color: var(--brand); }
-.slide.title-slide { justify-content: center; background: linear-gradient(135deg, #eff6ff, #fff 60%); }
-.slide.title-slide h2 { font-size: 66px; }
-.slide.title-slide .sub { font-size: 28px; color: #334155; margin-top: 8px; }
-.slide.title-slide .meta { font-size: 17px; color: var(--muted); margin-top: 36px; }
+.quote { margin: 0 0 18px; padding: 12px 20px; border-left: 4px solid var(--brand); background: #eff6ff; border-radius: 0 10px 10px 0; font-size: 19px; line-height: 1.45; color: #1e293b; font-style: italic; }
+.blocks { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; align-items: start; }
+.block { background: #f8fafc; border: 1px solid var(--line); border-radius: 12px; padding: 14px 18px; }
+.block ul { font-size: 16px; line-height: 1.4; padding-left: 18px; }
+.block li { margin: 7px 0; }
 .cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
 .card { background: #f8fafc; border: 1px solid var(--line); border-radius: 12px; padding: 16px 20px; }
-.card dl, .terms dl { margin: 0; display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; align-items: baseline; }
+.card dl { margin: 0; display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; align-items: baseline; }
 .card dt { font-size: 19px; font-weight: 600; }
 .card dd { margin: 0; font-size: 16px; color: var(--muted); }
-.jargon { display: grid; grid-template-columns: 0.8fr 1.2fr; gap: 28px; align-items: start; }
-.jargon ul { font-size: 17px; line-height: 1.4; padding-left: 20px; }
-.jargon li { margin: 8px 0; }
-.terms { background: #f8fafc; border: 1px solid var(--line); border-radius: 12px; padding: 14px 18px; }
-.terms dl { gap: 5px 14px; }
-.terms dt { font-size: 15px; font-weight: 700; color: var(--brand); white-space: nowrap; }
-.terms dd { margin: 0; font-size: 14.5px; line-height: 1.3; }
 .trees { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 pre.tree { margin: 0; background: #0f172a; color: #e2e8f0; border-radius: 12px; padding: 18px 20px; font-size: 14px; line-height: 1.5; white-space: pre; overflow: hidden; }
 pre.tree i { color: #94a3b8; font-style: normal; }

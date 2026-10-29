@@ -58,7 +58,7 @@ All numbers were cross-checked against an independent computation on the raw API
         ├── components.tsx    Card, Panel, Toggle, Segmented, Loading, ErrorBox
         ├── format.ts         number, date and London-time formatting
         └── ../public/        static pages served as-is: architecture.html (diagrams only, uses diagrams-*.js),
-                              walkthrough.html (5-slide dev deck: slides.js text and notes, deck.js engine), deck.css
+                              walkthrough.html (3-slide dev deck: slides.js text and notes, deck.js engine), deck.css
 ```
 
 ## Run it

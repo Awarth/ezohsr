@@ -14,10 +14,12 @@
   /** HTML for one slide's inner content, by kind. */
   function body(s) {
     switch (s.kind) {
-      case 'title':
-        return `<h2>${esc(s.title)}</h2><div class="sub">${esc(s.subtitle)}</div><div class="meta">${esc(s.meta)}</div>`
-      case 'bullets':
-        return `<h2>${esc(s.title)}</h2><div class="body">${list(s.bullets)}</div>`
+      case 'brief':
+        return (
+          `<h2>${esc(s.title)}</h2><div class="body"><blockquote class="quote">${esc(s.quote)}</blockquote><div class="blocks">` +
+          s.blocks.map((b) => `<div class="block"><h3>${esc(b.heading)}</h3>${list(b.bullets)}</div>`).join('') +
+          `</div></div>`
+        )
       case 'cards':
         return (
           `<h2>${esc(s.title)}</h2><div class="body"><div class="cards">` +
@@ -31,14 +33,6 @@
             .join('') +
           `</div></div>`
         )
-      case 'jargon':
-        return (
-          `<h2>${esc(s.title)}</h2><div class="body"><div class="jargon">` +
-          `<div class="ctx"><h3>${esc(s.contextTitle)}</h3>${list(s.context)}</div>` +
-          `<div class="terms"><h3>${esc(s.termsTitle)}</h3><dl>${s.terms
-            .map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`)
-            .join('')}</dl></div></div></div>`
-        )
       case 'tree': {
         const col = (rows) =>
           `<pre class="tree">${rows
@@ -51,7 +45,7 @@
     }
   }
 
-  const slideHtml = (s) => `<section class="slide${s.kind === 'title' ? ' title-slide' : ''}">${body(s)}</section>`
+  const slideHtml = (s) => `<section class="slide">${body(s)}</section>`
 
   function fit() {
     const el = host.firstElementChild
