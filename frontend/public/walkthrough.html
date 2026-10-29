@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wind Forecast Desk - Developer walkthrough</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/deck.css" />
+  </head>
+  <body>
+    <div class="deck screen-only">
+      <div class="topbar">
+        <b>Wind Forecast Desk</b>
+        <span id="progress">Developer walkthrough</span>
+        <span class="sp"></span>
+        <button id="btn-notes" type="button" aria-pressed="false">Notes (N)</button>
+        <button id="btn-full" type="button">Fullscreen (F)</button>
+        <button id="btn-print" type="button">Print / PDF (P)</button>
+        <a href="/architecture.html">Diagrams only</a>
+        <a href="/">App</a>
+      </div>
+      <div class="workspace">
+        <div class="viewport" id="viewport"><div id="slide-host"></div></div>
+        <aside class="notes" id="notes" aria-label="Presenter notes">
+          <h3>Presenter notes</h3>
+          <div id="notes-body"></div>
+        </aside>
+      </div>
+    </div>
+    <div class="print-only" id="print-host"></div>
+
+    <script src="/diagrams-base.js"></script>
+    <script src="/diagrams-a.js"></script>
+    <script src="/diagrams-b.js"></script>
+    <script src="/diagrams-c.js"></script>
+    <script src="/slides-a.js"></script>
+    <script src="/slides-b.js"></script>
+    <script src="/deck.js"></script>
+  </body>
+</html>

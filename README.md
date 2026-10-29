@@ -6,7 +6,9 @@ actually available at the day-ahead cutoff, and quantifies how wrong that foreca
 Data: national wind only, from Elexon BMRS `FUELHH` (actuals, `fuelType=WIND`) and `WINDFOR` (forecasts).
 Scope: decisions made in January 2026, i.e. delivery days 2 Jan - 1 Feb 2026.
 
-**Live app:** https://ezohsr.vercel.app/
+- **Live app:** https://ezohsr.vercel.app/
+- **Diagrams only:** https://ezohsr.vercel.app/architecture.html
+- **Developer walkthrough slides:** https://ezohsr.vercel.app/walkthrough.html (press `N` for presenter notes, `P` to print or save as PDF)
 
 ## AI tool usage
 
@@ -54,7 +56,9 @@ All numbers were cross-checked against an independent computation on the raw API
         ├── AccuracyPage.tsx  KPI strip, daily and hour-of-day charts, vintage comparison
         ├── api.ts            response types and query hooks
         ├── components.tsx    Card, Panel, Toggle, Segmented, Loading, ErrorBox
-        └── format.ts         number, date and London-time formatting
+        ├── format.ts         number, date and London-time formatting
+        └── ../public/        static pages served as-is: architecture.html (diagrams), walkthrough.html (slides),
+                              diagrams-*.js (shared SVG diagrams), slides-*.js (slide text and notes), deck.js, deck.css
 ```
 
 ## Run it

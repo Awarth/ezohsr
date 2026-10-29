@@ -1,0 +1,100 @@
+/* Shared styles for architecture.html and walkthrough.html. Diagram classes first, page chrome after. */
+:root {
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --ink: #0f172a;
+  --muted: #64748b;
+  --line: #cbd5e1;
+  --brand: #2563eb;
+  --brand-soft: #dbeafe;
+  --warn: #fef3c7;
+  --warn-line: #d97706;
+  --ok: #dcfce7;
+  --no: #fee2e2;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+code, pre, .code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+
+/* ---- diagram classes ---- */
+svg { display: block; width: 100%; height: auto; }
+svg .n { fill: #fff; stroke: var(--line); stroke-width: 1.5; }
+svg .n-brand { fill: var(--brand-soft); stroke: var(--brand); stroke-width: 1.5; }
+svg .n-data { fill: #e0f2fe; stroke: #0284c7; stroke-width: 1.5; }
+svg .n-ext { fill: #f1f5f9; stroke: #94a3b8; stroke-width: 1.5; }
+svg .n-warn { fill: var(--warn); stroke: var(--warn-line); stroke-width: 1.5; }
+svg .n-code { fill: #0f172a; }
+svg .grp { fill: none; stroke: var(--line); stroke-width: 1.5; stroke-dasharray: 6 5; }
+svg .t { font-size: 15px; font-weight: 600; fill: var(--ink); }
+svg .t.acc { fill: var(--brand); }
+svg .s { font-size: 12.5px; fill: var(--muted); }
+svg .s2 { font-size: 13px; fill: var(--ink); }
+svg .gl { font-size: 11.5px; font-weight: 700; letter-spacing: 0.08em; fill: var(--muted); }
+svg .code { font-size: 14px; fill: #e2e8f0; }
+svg .edge { stroke: #475569; stroke-width: 1.6; fill: none; marker-end: url(#arr); }
+svg .edge-d { stroke-dasharray: 5 4; }
+svg .lbl { font-size: 12.5px; fill: var(--ink); paint-order: stroke; stroke: var(--bg); stroke-width: 4px; stroke-linejoin: round; }
+svg .life { stroke: var(--line); stroke-width: 1.5; stroke-dasharray: 4 4; }
+svg .zone-ok { fill: var(--ok); }
+svg .zone-no { fill: var(--no); }
+svg .cutline { stroke: #dc2626; stroke-width: 2; stroke-dasharray: 5 4; }
+svg .cutlbl { font-size: 13px; font-weight: 700; fill: #b91c1c; }
+svg .axis { stroke: #64748b; stroke-width: 1.5; fill: none; }
+svg .tick-ok { fill: #16a34a; }
+svg .tick-no { fill: #dc2626; }
+svg .tick-used { fill: var(--brand); stroke: #fff; stroke-width: 3; }
+svg .brace { stroke: var(--brand); stroke-width: 2; fill: none; }
+
+/* ---- slide deck chrome (walkthrough.html) ---- */
+.deck { display: flex; flex-direction: column; height: 100vh; }
+.topbar { display: flex; align-items: center; gap: 14px; padding: 8px 18px; background: #fff; border-bottom: 1px solid var(--line); font-size: 13px; }
+.topbar b { font-size: 14px; }
+.topbar .sp { flex: 1; }
+.topbar a, .topbar button { color: var(--brand); background: none; border: 1px solid var(--line); border-radius: 7px; padding: 4px 10px; font-size: 12.5px; text-decoration: none; cursor: pointer; }
+.topbar button[aria-pressed='true'] { background: var(--ink); color: #fff; border-color: var(--ink); }
+.workspace { flex: 1; display: flex; min-height: 0; }
+.viewport { flex: 1; display: flex; align-items: center; justify-content: center; min-width: 0; padding: 16px; }
+.slide { width: 1280px; height: 720px; background: var(--card); border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 6px 24px rgb(15 23 42 / 0.08); padding: 48px 64px; display: flex; flex-direction: column; transform-origin: center center; flex: none; overflow: hidden; }
+.slide h2 { margin: 0 0 6px; font-size: 38px; letter-spacing: -0.02em; }
+.slide .kicker { font-size: 13px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--brand); margin-bottom: 8px; }
+.slide .body { flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: center; }
+.slide ul { margin: 0; padding-left: 26px; font-size: 25px; line-height: 1.45; }
+.slide li { margin: 10px 0; }
+.slide .dg { background: #fff; }
+.slide .dg svg { max-height: 520px; }
+.slide .cap { margin-top: 8px; font-size: 16px; color: var(--muted); text-align: center; }
+.slide.title-slide { justify-content: center; background: linear-gradient(135deg, #eff6ff, #fff 60%); }
+.slide.title-slide h2 { font-size: 66px; }
+.slide.title-slide .sub { font-size: 28px; color: #334155; margin-top: 8px; }
+.slide.title-slide .meta { font-size: 17px; color: var(--muted); margin-top: 36px; }
+table.tbl { width: 100%; border-collapse: collapse; font-size: 21px; }
+table.tbl th { text-align: left; font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); border-bottom: 2px solid var(--line); padding: 8px 12px; }
+table.tbl td { padding: 13px 12px; border-bottom: 1px solid #e2e8f0; }
+table.tbl td:first-child { font-weight: 600; white-space: nowrap; }
+.split { display: grid; grid-template-columns: 1.15fr 1fr; gap: 32px; align-items: center; }
+.split ul { font-size: 21px; }
+pre.code-block { margin: 0; background: #0f172a; color: #e2e8f0; border-radius: 12px; padding: 22px 24px; font-size: 16.5px; line-height: 1.55; overflow: hidden; white-space: pre; }
+.filetag { font-size: 14px; color: var(--muted); margin-bottom: 8px; font-family: ui-monospace, Menlo, monospace; }
+.counter { position: absolute; right: 24px; bottom: 14px; font-size: 13px; color: var(--muted); }
+.notes { width: 380px; flex: none; border-left: 1px solid var(--line); background: #fff; padding: 18px 20px; overflow: auto; font-size: 15px; line-height: 1.55; display: none; }
+.notes h3 { margin: 0 0 10px; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+body.show-notes .notes { display: block; }
+
+/* ---- print / save as PDF: one slide per landscape page, notes under each ---- */
+@media print {
+  @page { size: 1280px 900px; margin: 0; }
+  body { background: #fff; }
+  .topbar, .notes, .counter { display: none !important; }
+  .deck, .workspace, .viewport { display: block !important; height: auto !important; padding: 0 !important; }
+  .print-page { page-break-after: always; break-after: page; padding: 24px 0 0; }
+  .print-page .slide { transform: none !important; margin: 0 auto; box-shadow: none; }
+  .print-page .pnotes { width: 1152px; margin: 14px auto 0; font-size: 15px; line-height: 1.5; color: #334155; }
+}
+.print-only { display: none; }
+@media print { .print-only { display: block; } .screen-only { display: none !important; } }

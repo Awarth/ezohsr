@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wind Forecast Desk - Diagrams</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/deck.css" />
+    <style>
+      body { display: flex; flex-direction: column; min-height: 100vh; }
+      header { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; padding: 12px 24px; background: #fff; border-bottom: 1px solid var(--line); }
+      header h1 { margin: 0; font-size: 17px; letter-spacing: -0.01em; }
+      nav { display: flex; flex-wrap: wrap; gap: 4px; flex: 1; }
+      nav button { border: 1px solid var(--line); background: #fff; color: var(--ink); padding: 6px 12px; border-radius: 8px; font-size: 13px; cursor: pointer; }
+      nav button[aria-pressed='true'] { background: var(--ink); color: #fff; border-color: var(--ink); }
+      nav button:focus-visible, a:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+      header a { color: var(--brand); font-size: 13px; text-decoration: none; }
+      header a:hover { text-decoration: underline; }
+      main { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 20px 24px; max-width: 1280px; width: 100%; margin: 0 auto; }
+      figure { margin: 0; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 18px; box-shadow: 0 1px 2px rgb(15 23 42 / 0.06); }
+      figcaption { margin-top: 12px; font-size: 14px; color: var(--muted); text-align: center; }
+      .hint { text-align: center; font-size: 12px; color: var(--muted); padding: 10px; }
+      kbd { border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 0 5px; background: #fff; font-size: 11px; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Wind Forecast Desk: diagrams</h1>
+      <nav id="nav" aria-label="Diagrams"></nav>
+      <a href="/walkthrough.html">Open slide deck</a>
+      <a href="/">Back to app</a>
+    </header>
+    <main>
+      <figure>
+        <div id="stage"></div>
+        <figcaption id="caption"></figcaption>
+      </figure>
+    </main>
+    <p class="hint"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> switch diagram &middot; <kbd>F</kbd> fullscreen &middot; add <code>#vintage</code> to the URL to open one directly</p>
+
+    <script src="/diagrams-base.js"></script>
+    <script src="/diagrams-a.js"></script>
+    <script src="/diagrams-b.js"></script>
+    <script src="/diagrams-c.js"></script>
+    <script>
+      mountDiagramDefs()
+      const order = window.DIAGRAM_ORDER
+      const nav = document.getElementById('nav')
+      const stage = document.getElementById('stage')
+      const caption = document.getElementById('caption')
+      let current = Math.max(0, order.indexOf(location.hash.slice(1)))
+
+      order.forEach((key, i) => {
+        const b = document.createElement('button')
+        b.textContent = `${i + 1}. ${DIAGRAMS[key].title}`
+        b.addEventListener('click', () => show(i))
+        nav.appendChild(b)
+      })
+
+      function show(i) {
+        current = (i + order.length) % order.length
+        const d = DIAGRAMS[order[current]]
+        stage.innerHTML = d.svg
+        caption.textContent = d.caption
+        history.replaceState(null, '', '#' + order[current])
+        ;[...nav.children].forEach((b, n) => b.setAttribute('aria-pressed', String(n === current)))
+      }
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') show(current + 1)
+        else if (e.key === 'ArrowLeft') show(current - 1)
+        else if (e.key.toLowerCase() === 'f') document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen()
+      })
+      show(current)
+    </script>
+  </body>
+</html>
