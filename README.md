@@ -57,8 +57,8 @@ All numbers were cross-checked against an independent computation on the raw API
         ├── api.ts            response types and query hooks
         ├── components.tsx    Card, Panel, Toggle, Segmented, Loading, ErrorBox
         ├── format.ts         number, date and London-time formatting
-        └── ../public/        static pages served as-is: architecture.html (diagrams), walkthrough.html (slides),
-                              diagrams-*.js (shared SVG diagrams), slides-*.js (slide text and notes), deck.js, deck.css
+        └── ../public/        static pages served as-is: architecture.html (diagrams only, uses diagrams-*.js),
+                              walkthrough.html (5-slide dev deck: slides.js text and notes, deck.js engine), deck.css
 ```
 
 ## Run it

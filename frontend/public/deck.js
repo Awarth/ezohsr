@@ -1,8 +1,7 @@
-/* Slide engine for walkthrough.html. Slide data lives in slides-*.js; diagrams in diagrams-*.js. */
+/* Slide engine for walkthrough.html. Slide data lives in slides.js. */
 ;(function () {
   const slides = window.SLIDES
-  const esc = window.DG.esc
-  window.mountDiagramDefs()
+  const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 
   const host = document.getElementById('slide-host')
   const viewport = document.getElementById('viewport')
@@ -11,7 +10,6 @@
   let index = Math.min(slides.length - 1, Math.max(0, (parseInt(location.hash.slice(1), 10) || 1) - 1))
 
   const list = (items) => `<ul>${items.map((b) => `<li>${esc(b)}</li>`).join('')}</ul>`
-  const codeBlock = (lines) => `<pre class="code-block">${esc(lines.join('\n'))}</pre>`
 
   /** HTML for one slide's inner content, by kind. */
   function body(s) {
@@ -20,20 +18,34 @@
         return `<h2>${esc(s.title)}</h2><div class="sub">${esc(s.subtitle)}</div><div class="meta">${esc(s.meta)}</div>`
       case 'bullets':
         return `<h2>${esc(s.title)}</h2><div class="body">${list(s.bullets)}</div>`
-      case 'table':
+      case 'cards':
         return (
-          `<h2>${esc(s.title)}</h2><div class="body"><table class="tbl"><thead><tr>${s.head.map((h) => `<th>${esc(h)}</th>`).join('')}</tr></thead>` +
-          `<tbody>${s.rows.map((r) => `<tr>${r.map((c) => `<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`
+          `<h2>${esc(s.title)}</h2><div class="body"><div class="cards">` +
+          s.cards
+            .map(
+              (c) =>
+                `<div class="card"><h3>${esc(c.heading)}</h3><dl>${c.items
+                  .map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`)
+                  .join('')}</dl></div>`
+            )
+            .join('') +
+          `</div></div>`
         )
-      case 'diagram': {
-        const d = window.DIAGRAMS[s.key]
-        return `<h2>${esc(s.title)}</h2><div class="body"><div class="dg">${d.svg}</div><div class="cap">${esc(d.caption)}</div></div>`
+      case 'jargon':
+        return (
+          `<h2>${esc(s.title)}</h2><div class="body"><div class="jargon">` +
+          `<div class="ctx"><h3>${esc(s.contextTitle)}</h3>${list(s.context)}</div>` +
+          `<div class="terms"><h3>${esc(s.termsTitle)}</h3><dl>${s.terms
+            .map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`)
+            .join('')}</dl></div></div></div>`
+        )
+      case 'tree': {
+        const col = (rows) =>
+          `<pre class="tree">${rows
+            .map(([name, note, key]) => `<span class="${key ? 'k' : ''}">${esc(name)}</span>${note ? `<i>  ${esc(note)}</i>` : ''}`)
+            .join('\n')}</pre>`
+        return `<h2>${esc(s.title)}</h2><div class="body"><div class="trees">${col(s.left)}${col(s.right)}</div></div>`
       }
-      case 'code':
-        return (
-          `<h2>${esc(s.title)}</h2><div class="body"><div class="split"><div><div class="filetag">${esc(s.file)}</div>${codeBlock(s.code)}</div>` +
-          `${list(s.bullets)}</div></div>`
-        )
       default:
         return `<h2>${esc(s.title || '')}</h2>`
     }
